@@ -34,10 +34,11 @@ public class AnnotatedDomainType {
 	// no annotation, so it will be match with "field0" csv field
 	private int field0;
 
-	// match att1 with both "field1" and "field3" fields
+	// match att1 with both "field1" and "field3" csv fields
 	@CsvFields({ "field1", "field3" })
 	private String att1;
 
+	// match att2 with "field2" csv field
 	@CsvFields({ "field2" })
 	private double att2;
 
