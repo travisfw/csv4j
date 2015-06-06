@@ -8,7 +8,7 @@
 	
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>An application that deserializes CSV data into instances of java domain types.</description>
-	<url>http://ytheohar.blogspot.co.uk/</url>
+	<url>http://ytheohar.blogspot.co.uk/2015/06/csv4j-deserialize-csv-files-into-java.html</url>
 
 	<licenses>
 		<license>
