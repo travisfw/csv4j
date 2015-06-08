@@ -1,10 +1,15 @@
 # csv4j
 Csv4j is a dynamic tool for mapping csv data into objects of a predefined domain type. 
+
 The first (header) line of the CSV input is assumed to contain CSV fields. 
+
 Optionally custom annotations are used to match a java field into one or more CSV header fields. 
+
 In the absence of annotations, csv4j matches java fields to CSV fields of the same name. 
+
 Then, csv4j makes extensive use of reflection in order to set the proper values to proper fields. 
-For example a domain type looks like this:
+
+For example, a domain type could look like this:
 ```java
 public class DomainType {
  
