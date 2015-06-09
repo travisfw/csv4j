@@ -24,7 +24,7 @@ public class DomainType {
   @CsvFields({ "field2" })
   private double att2;
  
-  public AnnotatedDomainType() {
+  public DomainType() {
   }
  
   public void setField0(int field0) {
@@ -65,11 +65,11 @@ field0,field3,field2
 2,j,1.61
 3,is awesome,1.41
 ```
+For more details, read [Csv4j - Deserialize CSV Files into Java Objects](http://ytheohar.blogspot.co.uk/2015/06/csv4j-deserialize-csv-files-into-java.html)
+
 # Build and Dependencies
 Csv4j is written in java 8 and depends on [Guava](https://github.com/google/guava) v18.0.
 For testing it uses [TestNG](http://testng.org/doc/index.html).
 
 # License
-Cs4j is licensed under the Apache License, [Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-For more details, read [Csv4j - Deserialize CSV Files into Java Objects](http://ytheohar.blogspot.co.uk/2015/06/csv4j-deserialize-csv-files-into-java.html)
+Cs4j is licensed under [the Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
