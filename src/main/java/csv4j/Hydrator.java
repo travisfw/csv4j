@@ -85,9 +85,7 @@ public class Hydrator<T> {
 	}
 
 	private T toObject(final String[] csvFields, final String[] scvValues) {
-		Preconditions.checkState(csvFields.length == scvValues.length,
-				"csvFields.length= " + csvFields.length
-						+ " while scvValues.length= " + scvValues.length);
+		Preconditions.checkState(csvFields.length == scvValues.length);
 		T object = Sane.newInstance(richType.getType());
 
 		for (int i = 0; i < csvFields.length; i++) {
