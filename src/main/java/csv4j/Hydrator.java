@@ -77,14 +77,17 @@ public class Hydrator<T> {
 
 	private List<T> readDataLines(final Path p, final String[] csvFields) {
 		try (Stream<String> lines = Sane.fileLines(p)) {
-			return lines.skip(1)
-					.map(line -> toObject(csvFields, line.split(DELIMETER)))
+			return lines
+					.skip(1)
+					.map(line -> toObject(csvFields, line.split(DELIMETER, -1)))
 					.collect(Collectors.toList());
 		}
 	}
 
 	private T toObject(final String[] csvFields, final String[] scvValues) {
-		Preconditions.checkState(csvFields.length == scvValues.length);
+		Preconditions.checkState(csvFields.length == scvValues.length,
+				"csvFields.length= " + csvFields.length
+						+ " while scvValues.length= " + scvValues.length);
 		T object = Sane.newInstance(richType.getType());
 
 		for (int i = 0; i < csvFields.length; i++) {
@@ -92,7 +95,7 @@ public class Hydrator<T> {
 			String csvValue = scvValues[i];
 			RichField richField = richType.richFieldOf(csvField);
 			// ignore csv fields not matching any domain object field
-			if (richField != null) {
+			if (richField != null && !csvValue.isEmpty()) {
 				richField.setField(object, csvValue);
 			}
 		}
