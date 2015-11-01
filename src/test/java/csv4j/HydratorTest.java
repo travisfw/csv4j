@@ -47,7 +47,14 @@ public class HydratorTest {
 						Arrays.asList(SimpleDomainType.of(0, "csv", 3.14),
 								SimpleDomainType.of(1, "4", 2.71),
 								SimpleDomainType.of(2, "j", 1.61),
-								SimpleDomainType.of(3, "is awesome", 1.41)) } };
+								SimpleDomainType.of(3, "is awesome", 1.41)) },
+
+				{
+						"missingColumsAndValues.csv",
+						Arrays.asList(SimpleDomainType.of(0, "csv", 3.14),
+								SimpleDomainType.of(1, "4", 2.71),
+								SimpleDomainType.of(2, "j", 1.61),
+								SimpleDomainType.of(3, "is awesome", 1.41)) }, };
 	}
 
 	@Test(dataProvider = "simpleCsvToExpected")

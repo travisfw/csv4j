@@ -71,15 +71,13 @@ public class Hydrator<T> {
 		Preconditions.checkNotNull(p);
 		try (Stream<String> lines = Sane.fileLines(p)) {
 			Optional<String> firstLine = lines.findFirst();
-			return firstLine.get().split(DELIMETER);
+			return firstLine.get().split(DELIMETER, -1);
 		}
 	}
 
 	private List<T> readDataLines(final Path p, final String[] csvFields) {
 		try (Stream<String> lines = Sane.fileLines(p)) {
-			return lines
-					.skip(1)
-					.map(line -> toObject(csvFields, line.split(DELIMETER, -1)))
+			return lines.skip(1).map(line -> toObject(csvFields, line.split(DELIMETER, -1)))
 					.collect(Collectors.toList());
 		}
 	}
