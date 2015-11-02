@@ -16,11 +16,7 @@
 
 package csv4j;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.Stream;
 
 /**
  * Bypasses java's epic failure called "checked exception"
@@ -34,14 +30,6 @@ class Sane {
 		try {
 			return type.getDeclaredMethod(setterName, fieldType);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	static Stream<String> fileLines(Path p) {
-		try {
-			return Files.lines(p);
-		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

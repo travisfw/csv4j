@@ -64,6 +64,21 @@ public class ComplexDomainType {
 	}
 
 	// Not necessary. Added for tests
+	public MyInt getField0() {
+		return field0;
+	}
+
+	// Not necessary. Added for tests
+	public String getField1() {
+		return field1;
+	}
+
+	// Not necessary. Added for tests
+	public double getField2() {
+		return field2;
+	}
+
+	// Not necessary. Added for tests
 	@Override
 	public int hashCode() {
 		final int prime = 31;

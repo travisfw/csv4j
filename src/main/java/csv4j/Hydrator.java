@@ -24,6 +24,9 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 
+import csv4j.io.DataFeed;
+import csv4j.io.DataFeedImpl;
+
 /**
  * Hydrates (deserializes) csv formatted data into java objects of a given
  * domain type.
@@ -38,9 +41,11 @@ public class Hydrator<T> {
 	private static final String DELIMETER = ",";
 
 	private final RichType<T> richType;
+	private final DataFeed dataFeed;
 
-	private Hydrator(final Class<T> type) {
+	private Hydrator(final Class<T> type, DataFeed dataFeed) {
 		this.richType = RichType.of(type);
+		this.dataFeed = dataFeed;
 	}
 
 	/**
@@ -51,8 +56,23 @@ public class Hydrator<T> {
 	 * @return hydrator of the given type
 	 */
 	public static <U> Hydrator<U> of(final Class<U> type) {
+		return of(type, new DataFeedImpl());
+	}
+
+	/**
+	 * Hydrator factory with custom DataFeed
+	 * 
+	 * @param type
+	 *            the domain type
+	 * @param dataFeed
+	 *            the data feed
+	 * @return hydrator of the given type
+	 */
+	public static <U> Hydrator<U> of(final Class<U> type,
+			final DataFeed dataFeed) {
 		Preconditions.checkNotNull(type);
-		return new Hydrator<U>(type);
+		Preconditions.checkNotNull(dataFeed);
+		return new Hydrator<U>(type, dataFeed);
 	}
 
 	/**
@@ -67,17 +87,19 @@ public class Hydrator<T> {
 		return readDataLines(p, csvFields);
 	}
 
-	private String[] readHeaders(final Path p) {
+	String[] readHeaders(final Path p) {
 		Preconditions.checkNotNull(p);
-		try (Stream<String> lines = Sane.fileLines(p)) {
+		try (Stream<String> lines = dataFeed.lines(p)) {
 			Optional<String> firstLine = lines.findFirst();
 			return firstLine.get().split(DELIMETER, -1);
 		}
 	}
 
-	private List<T> readDataLines(final Path p, final String[] csvFields) {
-		try (Stream<String> lines = Sane.fileLines(p)) {
-			return lines.skip(1).map(line -> toObject(csvFields, line.split(DELIMETER, -1)))
+	List<T> readDataLines(final Path p, final String[] csvFields) {
+		try (Stream<String> lines = dataFeed.lines(p)) {
+			return lines
+					.skip(1)
+					.map(line -> toObject(csvFields, line.split(DELIMETER, -1)))
 					.collect(Collectors.toList());
 		}
 	}

@@ -74,6 +74,21 @@ public class AnnotatedDomainType {
 	}
 
 	// Not necessary. Added for tests
+	public int getField0() {
+		return field0;
+	}
+
+	// Not necessary. Added for tests
+	public String getAtt1() {
+		return att1;
+	}
+
+	// Not necessary. Added for tests
+	public double getAtt2() {
+		return att2;
+	}
+
+	// Not necessary. Added for tests
 	@Override
 	public int hashCode() {
 		final int prime = 31;

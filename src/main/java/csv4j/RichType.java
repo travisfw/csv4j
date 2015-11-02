@@ -78,6 +78,14 @@ class RichType<T> {
 		return type;
 	}
 
+	/**
+	 * Returns the rich field (java field) that the specified csv field maps to.
+	 * If there is no annotation containing the specified csv field, it is
+	 * assumed that there is a java field with the same name.
+	 * 
+	 * @param csvfield
+	 * @return the associated java rich field enriched with its setter method
+	 */
 	RichField richFieldOf(String csvfield) {
 		Preconditions.checkNotNull(csvfield);
 		String jfield = csvfieldToJfield.get(csvfield);

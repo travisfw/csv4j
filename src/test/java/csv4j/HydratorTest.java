@@ -17,15 +17,106 @@
 package csv4j;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import csv4j.io.DataFeed;
+
 public class HydratorTest {
+
+	@DataProvider
+	Object[][] headersParams() {
+		return new Object[][] {
+
+				{ Arrays.asList("field0,field1,field2", "0,csv,3.14"),
+						new String[] { "field0", "field1", "field2" } },
+				{ Arrays.asList("field0,field1,field2"),
+						new String[] { "field0", "field1", "field2" } },
+				{ Arrays.asList("field0,field1,field2, , "),
+						new String[] { "field0", "field1", "field2", " ", " " } },
+				{ Arrays.asList("field0,field1,field2,,"),
+						new String[] { "field0", "field1", "field2", "", "" } },
+				{
+						Arrays.asList(",field0, ,,field1,field2,"),
+						new String[] { "", "field0", " ", "", "field1",
+								"field2", "" } },
+
+		};
+	}
+
+	@Test(dataProvider = "headersParams")
+	public void headersOrderShouldBePreservedAndEmptyHeadersAllowed(
+			List<String> lines, String[] expectedHeaders) {
+		DataFeed dataFeed = Mockito.spy(DataFeed.class);
+		Mockito.when(dataFeed.lines(Matchers.any(Path.class))).thenReturn(
+				lines.stream());
+
+		Hydrator<SimpleDomainType> hydrator = Hydrator.of(
+				SimpleDomainType.class, dataFeed);
+		Path p = Mockito.mock(Path.class);
+		String[] actualHeaders = hydrator.readHeaders(p);
+		Assert.assertEquals(actualHeaders, expectedHeaders);
+	}
+
+	@Test(expectedExceptions = RuntimeException.class)
+	public void headersShouldRethrowCheckedExceptionAsUnchecked() {
+		DataFeed dataFeed = Mockito.spy(DataFeed.class);
+		Mockito.when(dataFeed.lines(Matchers.any(Path.class))).thenThrow(
+				new IOException());
+
+		Hydrator<SimpleDomainType> hydrator = Hydrator.of(
+				SimpleDomainType.class, dataFeed);
+		Path p = Mockito.mock(Path.class);
+		hydrator.readHeaders(p);
+	}
+
+	@DataProvider
+	Object[][] dataParams() {
+		return new Object[][] {
+
+				{
+						new String[] { "field0", "field1", "field2" },
+						Arrays.asList("", "0,csv,3.14", "1,4,2.71", "2,j,1.61",
+								"3,is awesome,1.41"),
+						Arrays.asList(SimpleDomainType.of(0, "csv", 3.14),
+								SimpleDomainType.of(1, "4", 2.71),
+								SimpleDomainType.of(2, "j", 1.61),
+								SimpleDomainType.of(3, "is awesome", 1.41)) },
+
+				{
+						new String[] { "field0", "field1", "field2" },
+						Arrays.asList("", "0,,3.14", "1,,2.71", ",j,1.61",
+								"3,is awesome,"),
+						Arrays.asList(SimpleDomainType.of(0, null, 3.14),
+								SimpleDomainType.of(1, null, 2.71),
+								SimpleDomainType.of(0, "j", 1.61),
+								SimpleDomainType.of(3, "is awesome", 0.0)) },
+
+		};
+	}
+
+	@Test(dataProvider = "dataParams")
+	public void testDatalines(String[] headers, List<String> lines,
+			List<String> expected) {
+		DataFeed dataFeed = Mockito.spy(DataFeed.class);
+		Mockito.when(dataFeed.lines(Matchers.any(Path.class))).thenReturn(
+				lines.stream());
+
+		Hydrator<SimpleDomainType> hydrator = Hydrator.of(
+				SimpleDomainType.class, dataFeed);
+		Path p = Mockito.mock(Path.class);
+		List<SimpleDomainType> actual = hydrator.readDataLines(p, headers);
+
+		Assert.assertEquals(actual, expected);
+	}
 
 	@DataProvider
 	Object[][] simpleCsvToExpected() {
