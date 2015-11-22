@@ -29,7 +29,8 @@ import csv4j.io.DataFeedImpl;
 
 /**
  * Hydrates (deserializes) csv formatted data into java objects of a given
- * domain type.
+ * domain type. The delimiter is comma by default, but can be parameterised for
+ * working with tsv or any other string-separated-values format.
  * 
  * @author Yannis Theocharis
  *
@@ -38,14 +39,17 @@ import csv4j.io.DataFeedImpl;
  */
 public class Hydrator<T> {
 
-	private static final String DELIMETER = ",";
+	private static final String COMMA = ",";
 
+	private final String delimiter;
 	private final RichType<T> richType;
 	private final DataFeed dataFeed;
 
-	private Hydrator(final Class<T> type, DataFeed dataFeed) {
+	private Hydrator(final Class<T> type, final DataFeed dataFeed,
+			final String delimiter) {
 		this.richType = RichType.of(type);
 		this.dataFeed = dataFeed;
+		this.delimiter = delimiter;
 	}
 
 	/**
@@ -56,11 +60,24 @@ public class Hydrator<T> {
 	 * @return hydrator of the given type
 	 */
 	public static <U> Hydrator<U> of(final Class<U> type) {
-		return of(type, new DataFeedImpl());
+		return of(type, new DataFeedImpl(), COMMA);
 	}
 
 	/**
-	 * Hydrator factory with custom DataFeed
+	 * Hydrator factory with custom delimiter
+	 * 
+	 * @param type
+	 *            the domain type
+	 * @param delimiter
+	 *            the input file delimeter
+	 * @return hydrator of the given type
+	 */
+	public static <U> Hydrator<U> of(final Class<U> type, final String delimiter) {
+		return of(type, new DataFeedImpl(), delimiter);
+	}
+
+	/**
+	 * Hydrator factory with custom dataFeed
 	 * 
 	 * @param type
 	 *            the domain type
@@ -70,9 +87,26 @@ public class Hydrator<T> {
 	 */
 	public static <U> Hydrator<U> of(final Class<U> type,
 			final DataFeed dataFeed) {
+		return of(type, dataFeed, COMMA);
+	}
+
+	/**
+	 * Hydrator factory with custom dataFeed and delimiter
+	 * 
+	 * @param type
+	 *            the domain type
+	 * @param dataFeed
+	 *            the data feed
+	 * @param delimiter
+	 *            the input file delimiter
+	 * @return hydrator of the given type
+	 */
+	public static <U> Hydrator<U> of(final Class<U> type,
+			final DataFeed dataFeed, final String delimiter) {
 		Preconditions.checkNotNull(type);
 		Preconditions.checkNotNull(dataFeed);
-		return new Hydrator<U>(type, dataFeed);
+		Preconditions.checkNotNull(delimiter);
+		return new Hydrator<U>(type, dataFeed, delimiter);
 	}
 
 	/**
@@ -91,7 +125,7 @@ public class Hydrator<T> {
 		Preconditions.checkNotNull(p);
 		try (Stream<String> lines = dataFeed.lines(p)) {
 			Optional<String> firstLine = lines.findFirst();
-			return firstLine.get().split(DELIMETER, -1);
+			return firstLine.get().split(delimiter, -1);
 		}
 	}
 
@@ -99,7 +133,7 @@ public class Hydrator<T> {
 		try (Stream<String> lines = dataFeed.lines(p)) {
 			return lines
 					.skip(1)
-					.map(line -> toObject(csvFields, line.split(DELIMETER, -1)))
+					.map(line -> toObject(csvFields, line.split(delimiter, -1)))
 					.collect(Collectors.toList());
 		}
 	}

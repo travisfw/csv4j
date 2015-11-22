@@ -194,6 +194,17 @@ public class HydratorTest {
 		Assert.assertEquals(actual, expected);
 	}
 
+	@Test(dataProvider = "simpleCsvToExpected")
+	public void simpleDomainTypeTSV(String csvFileName,
+			List<SimpleDomainType> expected) {
+		String tsvFileName = csvFileName.replace(".csv", ".tsv");
+		Path p = toPath(tsvFileName);
+		Hydrator<SimpleDomainType> hydrator = Hydrator.of(
+				SimpleDomainType.class, "\t");
+		List<SimpleDomainType> actual = hydrator.fromCSV(p);
+		Assert.assertEquals(actual, expected);
+	}
+
 	private Path toPath(String relativeFileName) {
 		String dataFilePath = this.getClass().getClassLoader()
 				.getResource(relativeFileName).getFile();
